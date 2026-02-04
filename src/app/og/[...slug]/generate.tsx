@@ -3,7 +3,7 @@ import type { ImageResponseOptions } from '@takumi-rs/image-response'
 import type { ReactNode } from 'react'
 import { title as siteName } from '@/lib/layout.shared'
 
-export type GenerateProps = {
+export interface GenerateProps {
   title: ReactNode
   description?: ReactNode
   tag?: string

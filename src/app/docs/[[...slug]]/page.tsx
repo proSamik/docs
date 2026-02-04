@@ -1,5 +1,5 @@
 import Link from 'fumadocs-core/link'
-import { getPageTreePeers } from 'fumadocs-core/page-tree'
+import { findSiblings } from 'fumadocs-core/page-tree'
 import { PathUtils } from 'fumadocs-core/source'
 import * as Twoslash from 'fumadocs-twoslash/ui'
 import { createGenerator } from 'fumadocs-typescript'
@@ -120,11 +120,23 @@ export default async function Page(
 function DocsCategory({ url }: { url: string }) {
   return (
     <Cards>
-      {getPageTreePeers(source.pageTree, url).map((peer) => (
-        <Card href={peer.url} key={peer.url} title={peer.name}>
-          {peer.description}
-        </Card>
-      ))}
+      {findSiblings(source.getPageTree(), url).map((item) => {
+        if (item.type === 'separator') {
+          return
+        }
+        if (item.type === 'folder') {
+          if (!item.index) {
+            return
+          }
+          item = item.index
+        }
+
+        return (
+          <Card href={item.url} key={item.url} title={item.name}>
+            {item.description}
+          </Card>
+        )
+      })}
     </Cards>
   )
 }

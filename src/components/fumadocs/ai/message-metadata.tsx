@@ -16,7 +16,7 @@ import {
 } from '@/components/fumadocs/ai/sources'
 import { Spinner } from '@/components/ui/spinner'
 
-type MessageMetadataProps = {
+interface MessageMetadataProps {
   parts: MyUIMessage['parts']
   inProgress: boolean
 }

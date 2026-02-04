@@ -4,12 +4,12 @@ import type { ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/cn'
 
-export type UpdatesProps = {
+export interface UpdatesProps {
   children: ReactNode
   className?: string
 }
 
-export type UpdateProps = {
+export interface UpdateProps {
   children: ReactNode
   label: string
   id?: string

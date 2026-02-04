@@ -1,4 +1,5 @@
 import {
+  applyMdxPreset,
   defineConfig,
   defineDocs,
   frontmatterSchema,
@@ -6,13 +7,16 @@ import {
 } from 'fumadocs-mdx/config'
 import jsonSchema from 'fumadocs-mdx/plugins/json-schema'
 import lastModified from 'fumadocs-mdx/plugins/last-modified'
+import type { RemarkAutoTypeTableOptions } from 'fumadocs-typescript'
 import type { ElementContent } from 'hast'
 import type { ShikiTransformer } from 'shiki'
 import { z } from 'zod'
+import { shikiConfig } from './src/lib/shiki'
 
 export const docs = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
+      preview: z.string().optional(),
       index: z.boolean().default(false),
       /**
        * API routes only
@@ -24,6 +28,73 @@ export const docs = defineDocs({
       extractLinkReferences: true,
     },
     async: true,
+    async mdxOptions(environment) {
+      const { rehypeCodeDefaultOptions } = await import(
+        'fumadocs-core/mdx-plugins/rehype-code'
+      )
+      const { remarkStructureDefaultOptions } = await import(
+        'fumadocs-core/mdx-plugins/remark-structure'
+      )
+      const { remarkSteps } = await import(
+        'fumadocs-core/mdx-plugins/remark-steps'
+      )
+      const { transformerTwoslash } = await import('fumadocs-twoslash')
+      const { createFileSystemTypesCache } = await import(
+        'fumadocs-twoslash/cache-fs'
+      )
+      const { default: remarkMath } = await import('remark-math')
+      const { remarkTypeScriptToJavaScript } = await import(
+        'fumadocs-docgen/remark-ts2js'
+      )
+      const { default: rehypeKatex } = await import('rehype-katex')
+      const {
+        remarkAutoTypeTable,
+        createGenerator,
+        createFileSystemGeneratorCache,
+      } = await import('fumadocs-typescript')
+
+      const typeTableOptions: RemarkAutoTypeTableOptions = {
+        generator: createGenerator({
+          cache: createFileSystemGeneratorCache('.next/fumadocs-typescript'),
+        }),
+        shiki: shikiConfig,
+      }
+      return applyMdxPreset({
+        remarkStructureOptions: {
+          types: [...remarkStructureDefaultOptions.types, 'code'],
+        },
+        rehypeCodeOptions: {
+          langs: ['ts', 'js', 'html', 'tsx', 'mdx'],
+          inline: 'tailing-curly-colon',
+          themes: {
+            light: 'catppuccin-latte',
+            dark: 'catppuccin-mocha',
+          },
+          transformers: [
+            ...(rehypeCodeDefaultOptions.transformers ?? []),
+            transformerTwoslash({
+              typesCache: createFileSystemTypesCache(),
+            }),
+            transformerEscape(),
+          ],
+        },
+        remarkCodeTabOptions: {
+          parseMdx: true,
+        },
+        remarkNpmOptions: {
+          persist: {
+            id: 'package-manager',
+          },
+        },
+        remarkPlugins: [
+          remarkSteps,
+          remarkMath,
+          [remarkAutoTypeTable, typeTableOptions],
+          remarkTypeScriptToJavaScript,
+        ],
+        rehypePlugins: (v) => [rehypeKatex, ...v],
+      })(environment)
+    },
   },
   meta: {
     schema: metaSchema.extend({
@@ -59,47 +130,4 @@ export default defineConfig({
     }),
     lastModified(),
   ],
-  mdxOptions: async () => {
-    const { rehypeCodeDefaultOptions } = await import(
-      'fumadocs-core/mdx-plugins/rehype-code'
-    )
-    const { remarkSteps } = await import(
-      'fumadocs-core/mdx-plugins/remark-steps'
-    )
-    const { transformerTwoslash } = await import('fumadocs-twoslash')
-    const { createFileSystemTypesCache } = await import(
-      'fumadocs-twoslash/cache-fs'
-    )
-    const { default: remarkMath } = await import('remark-math')
-    const { default: rehypeKatex } = await import('rehype-katex')
-    const { remarkAutoTypeTable } = await import('fumadocs-typescript')
-
-    return {
-      rehypeCodeOptions: {
-        langs: ['ts', 'js', 'html', 'tsx', 'mdx'],
-        inline: 'tailing-curly-colon',
-        themes: {
-          light: 'catppuccin-latte',
-          dark: 'catppuccin-mocha',
-        },
-        transformers: [
-          ...(rehypeCodeDefaultOptions.transformers ?? []),
-          transformerTwoslash({
-            typesCache: createFileSystemTypesCache(),
-          }),
-          transformerEscape(),
-        ],
-      },
-      remarkCodeTabOptions: {
-        parseMdx: true,
-      },
-      remarkNpmOptions: {
-        persist: {
-          id: 'package-manager',
-        },
-      },
-      remarkPlugins: [remarkSteps, remarkMath, remarkAutoTypeTable],
-      rehypePlugins: (v) => [rehypeKatex, ...v],
-    }
-  },
 })
