@@ -18,6 +18,7 @@
     "incremental": true,
     "paths": {
       "@/*": ["./src/*"],
+      "fumadocs-core/i18n": ["./src/shims/fumadocs-core/i18n.ts"],
       "fumadocs-mdx:collections/*": [".source/*"]
     },
     "plugins": [
