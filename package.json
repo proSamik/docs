@@ -7,6 +7,7 @@
     "build": "bun run build:pre && next build && bun run build:post",
     "build:pre": "bun ./scripts/pre-build.ts",
     "build:post": "bun ./scripts/post-build.ts",
+    "build:npm": "npm run build:pre && next build && npm run build:post",
     "dev": "next dev",
     "start": "next start",
     "postinstall": "fumadocs-mdx",
