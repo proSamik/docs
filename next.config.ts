@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
 import bundleAnalyzer from '@next/bundle-analyzer'
 import { createMDX } from 'fumadocs-mdx/next'
 import type { NextConfig } from 'next'
@@ -18,6 +19,26 @@ async function createNextConfig(): Promise<NextConfig> {
       fetches: {
         fullUrl: true,
       },
+    },
+    experimental: {
+      turbo: {
+        resolveAlias: {
+          'fumadocs-core/i18n': resolve(
+            process.cwd(),
+            './src/shims/fumadocs-core/i18n.ts',
+          ),
+        },
+      },
+    },
+    webpack: (config) => {
+      config.resolve.alias = {
+        ...(config.resolve.alias ?? {}),
+        'fumadocs-core/i18n': resolve(
+          process.cwd(),
+          './src/shims/fumadocs-core/i18n.ts',
+        ),
+      }
+      return config
     },
     typescript: {
       ignoreBuildErrors: true,
@@ -47,8 +68,8 @@ async function createNextConfig(): Promise<NextConfig> {
     },
   }
 
-  return nextConfig
-}
+    return nextConfig
+  }
 
 const bundleAnalyzerPlugin = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
