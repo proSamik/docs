@@ -20,13 +20,15 @@ export const APIPage = ({
   operations,
   webhooks,
 }: ApiPageProps) => {
+  const sanitized: ApiPageProps = {
+    document,
+    showTitle,
+    showDescription,
+    operations,
+    webhooks,
+  }
+
   return (
-    <APIRawPage
-      document={document}
-      showTitle={showTitle}
-      showDescription={showDescription}
-      operations={operations}
-      webhooks={webhooks}
-    />
+    <APIRawPage {...sanitized} />
   )
 }
