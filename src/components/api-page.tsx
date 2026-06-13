@@ -19,9 +19,7 @@ export const APIPage = ({
   showDescription,
   operations,
   webhooks,
-  style: _style,
-  className: _className,
-}: ApiPageProps & { style?: unknown; className?: unknown }) => {
+}: ApiPageProps) => {
   return (
     <APIRawPage
       document={document}
