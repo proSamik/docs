@@ -18,6 +18,16 @@ import { createSearchDocsTool } from './utils/tools/search-docs'
 
 export async function POST(request: Request) {
   try {
+    if (!env.OPENAI_API_KEY) {
+      return new Response(
+        JSON.stringify({
+          error:
+            'OPENAI_API_KEY is not configured. Set it in .env to enable the AI chat endpoint.',
+        }),
+        { status: 503, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
     const {
       messages,
     }: {
