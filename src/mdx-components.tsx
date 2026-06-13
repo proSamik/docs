@@ -12,6 +12,19 @@ import { APIPage } from '@/components/api-page'
 import { Update, Updates } from '@/components/fumadocs/updates'
 import { Mermaid } from '@/components/mdx/mermaid'
 
+const APIRawPage = APIPage
+type APIPageProps = ComponentProps<typeof APIRawPage>
+const SafeAPIPage = ({
+  style: _style,
+  className: _className,
+  ...props
+}: APIPageProps & {
+  style?: unknown
+  className?: unknown
+}) => {
+  return <APIRawPage {...(props as APIPageProps)} />
+}
+
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...(icons as unknown as MDXComponents),
@@ -26,12 +39,8 @@ export function getMDXComponents(components?: MDXComponents) {
     TypeTable,
     Callout,
     blockquote: Callout as unknown as FC<ComponentProps<'blockquote'>>,
-    APIPage,
+    APIPage: SafeAPIPage,
     Banner,
     ...components,
   } satisfies MDXComponents
-}
-
-declare global {
-  type MDXProvidedComponents = ReturnType<typeof getMDXComponents>
 }
