@@ -10,14 +10,14 @@ This starter ships with an AI assistant that runs on your content. It streams an
 
 ## Configuration
 
-Add your OpenAI key to `.env`:
+Add your OpenAI key to `.env` to enable the assistant:
 
 ```bash
-OPENAI_API_KEY=sk-your_api_key_here
+OPENAI_API_KEY=sk-your_api_key_here # optional for non-chat usage
 NEXT_PUBLIC_BASE_URL=http://localhost:3000 # optional, defaults locally
 ```
 
-> The key must start with `sk-` (validated in `src/env.ts`). `NEXT_PUBLIC_BASE_URL` is only needed when you deploy to a non-default host.
+> The key must start with `sk-` when provided (validated in `src/env.ts`). `NEXT_PUBLIC_BASE_URL` is only needed when you deploy to a non-default host.
 
 ## Using the UI
 
