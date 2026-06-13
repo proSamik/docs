@@ -1,6 +1,10 @@
 # deps
 /node_modules
 
+.env
+.env.local
+
+
 # generated content
 .contentlayer
 .content-collections
