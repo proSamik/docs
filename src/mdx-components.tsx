@@ -17,12 +17,24 @@ type APIPageProps = ComponentProps<typeof APIRawPage>
 const SafeAPIPage = ({
   style: _style,
   className: _className,
-  ...props
+  document,
+  showTitle,
+  showDescription,
+  operations,
+  webhooks,
 }: APIPageProps & {
   style?: unknown
   className?: unknown
 }) => {
-  return <APIRawPage {...(props as APIPageProps)} />
+  return (
+    <APIRawPage
+      document={document}
+      showTitle={showTitle}
+      showDescription={showDescription}
+      operations={operations}
+      webhooks={webhooks}
+    />
+  )
 }
 
 export function getMDXComponents(components?: MDXComponents) {
